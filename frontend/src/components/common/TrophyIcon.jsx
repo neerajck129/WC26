@@ -2,76 +2,40 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 export default function TrophyIcon({ size = 160 }) {
-  const orbitRadius = size * 0.62;
-  const ballSize = size * 0.22;
-  const center = size / 2;
-
   return (
     <div
       className="relative inline-flex items-center justify-center"
       style={{ width: size, height: size }}
     >
-      {/* Orbit path ring (faint dashed circle) */}
-      <div
-        className="absolute rounded-full"
+      {/* Ball — behind trophy, 2D spinning in place */}
+      <motion.img
+        src="/images/wc-ball.png"
+        alt="FIFA World Cup 2026 Ball"
         style={{
-          width: orbitRadius * 2,
-          height: orbitRadius * 2,
-          top: center - orbitRadius,
-          left: center - orbitRadius,
-          border: '1px dashed rgba(245,158,11,0.15)',
-          borderRadius: '50%',
-        }}
-      />
-
-      {/* Orbiting football */}
-      <motion.div
-        className="absolute"
-        style={{
-          width: ballSize,
-          height: ballSize,
-          top: center - ballSize / 2,
-          left: center - ballSize / 2,
+          position: 'absolute',
+          width: size * 0.85,
+          height: size * 0.85,
+          objectFit: 'contain',
+          zIndex: 1,
+          filter: 'drop-shadow(0 0 12px rgba(0,0,0,0.6))',
+          opacity: 0.9,
         }}
         animate={{ rotate: 360 }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'linear' }}
-      >
-        {/* Ball offset to orbit radius, counter-rotates to stay upright */}
-        <motion.div
-          style={{
-            position: 'absolute',
-            width: ballSize,
-            height: ballSize,
-            top: -orbitRadius,
-            left: 0,
-          }}
-          animate={{ rotate: -360 }}
-          transition={{ duration: 7, repeat: Infinity, ease: 'linear' }}
-        >
-          <img
-            src="/images/wc-ball.png"
-            alt="FIFA World Cup 2026 Ball"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.7))',
-            }}
-          />
-        </motion.div>
-      </motion.div>
+        transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
+      />
 
-      {/* Pulsing gold glow behind trophy */}
+      {/* Pulsing gold glow behind everything */}
       <motion.div
         className="absolute inset-0 rounded-full"
         style={{
-          background: 'radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 70%)',
+          zIndex: 0,
         }}
-        animate={{ scale: [1, 1.12, 1], opacity: [0.5, 1, 0.5] }}
+        animate={{ scale: [1, 1.12, 1], opacity: [0.4, 0.9, 0.4] }}
         transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* Trophy image — floats up and down */}
+      {/* Trophy — on top, floating */}
       <motion.img
         src="/images/wc-trophy.png"
         alt="FIFA World Cup Trophy"
@@ -88,7 +52,7 @@ export default function TrophyIcon({ size = 160 }) {
         transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* Bottom shadow synced to float */}
+      {/* Ground shadow synced to trophy float */}
       <motion.div
         className="absolute bottom-0 left-1/2 -translate-x-1/2"
         style={{
@@ -96,6 +60,7 @@ export default function TrophyIcon({ size = 160 }) {
           height: 10,
           background: 'radial-gradient(ellipse, rgba(245,158,11,0.3) 0%, transparent 70%)',
           filter: 'blur(4px)',
+          zIndex: 0,
         }}
         animate={{ scaleX: [1, 0.75, 1], opacity: [0.6, 0.25, 0.6] }}
         transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
