@@ -15,6 +15,7 @@
   --text-muted: #94a3b8;
 }
 
+
 * {
   margin: 0;
   padding: 0;
@@ -34,6 +35,30 @@ body {
 }
 
 /* Stadium grid background */
+.hero-bg {
+  background-image: url('/images/hero-bg-mobile.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+@media (min-width: 768px) {
+  .hero-bg {
+    background-image: url('/images/hero-bg-tablet.jpg');
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-bg {
+    background-image: url('/images/hero-bg-desktop.jpg');
+  }
+}
+
+@media (min-width: 1440px) {
+  .hero-bg {
+    background-image: url('/images/hero-bg-xl.jpg');
+  }
+}
 .stadium-bg {
   background-image: 
     linear-gradient(rgba(245, 158, 11, 0.03) 1px, transparent 1px),
