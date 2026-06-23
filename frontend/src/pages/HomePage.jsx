@@ -75,7 +75,7 @@ export default function HomePage() {
           />
 
           <motion.div {...fadeUp} className="relative">
-            <TrophyIcon size={100} />
+            <TrophyIcon size={160} />
           </motion.div>
 
           <motion.div
