@@ -87,13 +87,11 @@ export default function HomePage() {
             <div className="text-xs tracking-[0.4em] text-gold-500 uppercase mb-3">
               DYFI BALUSSERY MC
             </div>
-            <div className='text-4xl md:text-5xl lg:text-8xl font-display'>FIFA WORLD CUP</div>
+            
             <h1
               className="font-display  text-5xl md:text-7xl lg:text-8xl tracking-wider leading-none "
               style={{ color: '#f1f5f9' }}>
-
-
-
+                FIFA WORLD CUP
               <h1 className="gold-text mt-5 font ">PREDICTION CHALLENGE</h1>
 
             </h1>
