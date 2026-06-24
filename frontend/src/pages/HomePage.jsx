@@ -85,9 +85,9 @@ export default function HomePage() {
             className="mt-6"
           >
             <div className="text-xs tracking-[0.4em] text-gold-500 uppercase mb-3">
-              FIFA World Cup 2026
+              DYFI BALUSSERY MC
             </div>
-            <div className='text-3xl md:text-5xl lg:text-8xl font-display'>DYFI BALUSSERY MC</div>
+            <div className='text-4xl md:text-5xl lg:text-8xl font-display'>FIFA WORLD CUP</div>
             <h1
               className="font-display  text-5xl md:text-7xl lg:text-8xl tracking-wider leading-none "
               style={{ color: '#f1f5f9' }}>
