@@ -31,7 +31,7 @@ export default function HomePage() {
           setAnnouncementDate(data.data.announcementDate);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const handleCountdownExpired = () => setSubmissionsOpen(false);
@@ -48,16 +48,16 @@ export default function HomePage() {
         {/* Nav */}
         <nav className="border-b border-white/5 px-4 md:px-8 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-gold-500 font-display text-xl tracking-widest">WC26</span>
-            <span className="text-slate-600 text-xs uppercase tracking-widest hidden sm:block">DYFI Prediction Challenge</span>
+            <span className="text-slate-400  text-xs uppercase tracking-widest">DYFI BALUSSERY MC</span>
+            <span className="text-slate-600 text-xs uppercase tracking-widest hidden sm:block">World Cup Prediction Challenge</span>
           </div>
           <div className="flex items-center gap-4">
-            <Link to="/leaderboard" className="text-sm text-slate-400 hover:text-gold-400 transition-colors">
+            <Link to="/leaderboard" className="text-sm text-slate-500 hover:text-gold-400 transition-colors">
               Leaderboard
             </Link>
             <Link
               to="/admin"
-              className="text-xs px-3 py-1.5 rounded-lg border border-white/10 text-slate-400 hover:text-gold-400 hover:border-gold-500/20 transition-all"
+              className="text-xs px-3 py-1.5 rounded-lg border border-white/10 text-slate-500 hover:text-gold-400 hover:border-gold-500/20 transition-all"
             >
               Admin
             </Link>
@@ -87,19 +87,19 @@ export default function HomePage() {
             <div className="text-xs tracking-[0.4em] text-gold-500 uppercase mb-3">
               FIFA World Cup 2026
             </div>
-             <div className='text-4xl md:text-5xl lg:text-8xl font-display'>DYFI BALUSSERY MC</div>
+            <div className='text-3xl md:text-5xl lg:text-8xl font-display'>DYFI BALUSSERY MC</div>
             <h1
               className="font-display  text-5xl md:text-7xl lg:text-8xl tracking-wider leading-none "
               style={{ color: '#f1f5f9' }}>
-              
 
-              
-                <h1 className="gold-text mt-5">PREDICTION CHALLENGE</h1>
-                
+
+
+              <h1 className="gold-text mt-5 font ">PREDICTION CHALLENGE</h1>
+
             </h1>
             <p className="text-slate-400 text-base md:text-lg mt-6 max-w-xl mx-auto leading-relaxed">
-              Predict the FIFA World Cup Final winner and score before kickoff.
-              Compete with football fans and see how accurate your prediction is.
+              Think you know who will lift the trophy?
+Predict the World Cup Final winner and score for a chance to win a special gift.
             </p>
           </motion.div>
 
@@ -193,7 +193,7 @@ export default function HomePage() {
             <div className="flex items-start gap-3">
               <span className="text-2xl">⏰</span>
               <p className="text-slate-200 text-sm">
-                Prediction submissions close when the World Cup Final starts.
+                Predictions will close on <span className='font-black text-amber-300'>13 July 2026</span> at 11:59 PM.
               </p>
             </div>
             <div className="flex items-start gap-3">
@@ -212,7 +212,7 @@ export default function HomePage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              { step: '01', icon: '📝', title: 'Submit', desc: 'Fill in your name, phone, predicted winner, and final score before kickoff.' },
+              { step: '01', icon: '📝', title: 'Submit', desc: 'Fill in your name, phone, predicted winner, and final score before deadline.' },
               { step: '02', icon: '⚽', title: 'Watch', desc: 'Enjoy the FIFA World Cup Final and cheer for your predicted winner.' },
               { step: '03', icon: '🏆', title: 'Win', desc: 'Results and leaderboard published after the official final result is confirmed.' },
             ].map((item) => (
@@ -255,16 +255,32 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+          <div className='text-center pt-4'>
+            <a
+              href="https://wa.me/919846112307"
+              target="_blank"
+              rel="noopener noreferrer"
+              className=" text-sm border border-green-500 rounded-full px-4 py-2 text-green-500 hover:text-gold-400 transition-colors mt-2 inline-block"
+            >
+              Contact on WhatsApp →
+            </a>
+          </div>
         </section>
 
         {/* Footer */}
         <footer className="border-t border-white/5 px-4 py-6 text-center">
           <p className="text-xs text-slate-600">
-            World Cup Prediction Challenge 2026 — Not a gambling platform. No real money involved.
+            <span className='text-slate-500' >DYFI BALUSSERY MC</span>
+            <br/> 
+            World Cup Prediction Challenge 2026  
+            
+           
           </p>
           <Link to="/leaderboard" className="text-xs text-gold-600 hover:text-gold-400 transition-colors mt-2 inline-block">
             View Leaderboard →
           </Link>
+          <p className="text-[7px] text-slate-600"> Not a gambling platform. No real money involved.</p>
+
         </footer>
 
       </div> {/* closes relative z-10 */}
