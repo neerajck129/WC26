@@ -87,13 +87,15 @@ export default function HomePage() {
             <div className="text-xs tracking-[0.4em] text-gold-500 uppercase mb-3">
               FIFA World Cup 2026
             </div>
+             <div className='text-4xl md:text-5xl lg:text-8xl font-display'>DYFI BALUSSERY MC</div>
             <h1
-              className="font-display text-5xl md:text-7xl lg:text-8xl tracking-wider leading-none"
-              style={{ color: '#f1f5f9' }}
-            >
-              DYFI
-              <br />
-              <span className="gold-text">PREDICTION CHALLENGE</span>
+              className="font-display  text-5xl md:text-7xl lg:text-8xl tracking-wider leading-none "
+              style={{ color: '#f1f5f9' }}>
+              
+
+              
+                <h1 className="gold-text mt-5">PREDICTION CHALLENGE</h1>
+                
             </h1>
             <p className="text-slate-400 text-base md:text-lg mt-6 max-w-xl mx-auto leading-relaxed">
               Predict the FIFA World Cup Final winner and score before kickoff.

@@ -2,10 +2,19 @@ const Prediction = require('../models/Prediction');
 const Settings = require('../models/Settings');
 const { sendPredictionNotification } = require('../services/telegram');
 
-// Submit a new prediction
+// Normalize phone to 10-digit format
+const normalizePhone = (phone) => {
+  // Remove all spaces, dashes, brackets
+  let cleaned = phone.replace(/[\s\-\(\)]/g, '');
+  // Remove country code prefixes: +91, 0091, 91 (if 12 digits starting with 91)
+  if (cleaned.startsWith('+91')) cleaned = cleaned.slice(3);
+  else if (cleaned.startsWith('0091')) cleaned = cleaned.slice(4);
+  else if (cleaned.startsWith('91') && cleaned.length === 12) cleaned = cleaned.slice(2);
+  return cleaned;
+};
+
 const submitPrediction = async (req, res) => {
   try {
-    // Check if submissions are open
     const submissionsOpen = await Settings.get('submissionsOpen', true);
     if (!submissionsOpen) {
       return res.status(403).json({
@@ -16,13 +25,23 @@ const submitPrediction = async (req, res) => {
 
     const { name, phone, predictedWinner, yourGoals, opponentGoals, isBloodDonor, bloodGroup } = req.body;
 
-    // Validate
+    // Validate name
     if (!name || name.trim().length < 3) {
       return res.status(400).json({ success: false, message: 'Name must be at least 3 characters' });
     }
-    if (!phone || !/^\+?[\d\s\-]{7,15}$/.test(phone.trim())) {
-      return res.status(400).json({ success: false, message: 'Invalid phone number format' });
+
+    // Validate & normalize phone
+    if (!phone || !phone.trim()) {
+      return res.status(400).json({ success: false, message: 'Phone number is required' });
     }
+    const normalizedPhone = normalizePhone(phone.trim());
+    if (!/^\d{10}$/.test(normalizedPhone)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Enter a valid 10-digit Indian mobile number',
+      });
+    }
+
     if (!predictedWinner || !predictedWinner.trim()) {
       return res.status(400).json({ success: false, message: 'Predicted winner is required' });
     }
@@ -36,8 +55,8 @@ const submitPrediction = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Blood group is required if you are a donor' });
     }
 
-    // Check duplicate phone
-    const existing = await Prediction.findOne({ phone: phone.trim() });
+    // Check duplicate using normalized phone
+    const existing = await Prediction.findOne({ phone: normalizedPhone });
     if (existing) {
       return res.status(409).json({
         success: false,
@@ -46,13 +65,12 @@ const submitPrediction = async (req, res) => {
       });
     }
 
-    // Generate unique ID
     const predictionId = await Prediction.generatePredictionId();
 
     const prediction = await Prediction.create({
       predictionId,
       name: name.trim(),
-      phone: phone.trim(),
+      phone: normalizedPhone, // always store normalized 10-digit
       predictedWinner: predictedWinner.trim(),
       yourGoals: parseInt(yourGoals),
       opponentGoals: parseInt(opponentGoals),
@@ -60,7 +78,6 @@ const submitPrediction = async (req, res) => {
       bloodGroup: isBloodDonor ? bloodGroup : null,
     });
 
-    // Send Telegram notification (non-blocking)
     sendPredictionNotification(prediction).catch(console.error);
 
     res.status(201).json({
@@ -83,11 +100,10 @@ const submitPrediction = async (req, res) => {
   }
 };
 
-// Check if phone already submitted
 const checkDuplicate = async (req, res) => {
   try {
-    const { phone } = req.params;
-    const existing = await Prediction.findOne({ phone: phone.trim() });
+    const normalized = normalizePhone(req.params.phone.trim());
+    const existing = await Prediction.findOne({ phone: normalized });
     res.json({
       success: true,
       exists: !!existing,
@@ -98,7 +114,6 @@ const checkDuplicate = async (req, res) => {
   }
 };
 
-// Get public stats
 const getPublicStats = async (req, res) => {
   try {
     const total = await Prediction.countDocuments();
@@ -114,13 +129,7 @@ const getPublicStats = async (req, res) => {
 
     res.json({
       success: true,
-      data: {
-        total,
-        teamCounts,
-        submissionsOpen,
-        announcementDate,
-        finalKickoff,
-      },
+      data: { total, teamCounts, submissionsOpen, announcementDate, finalKickoff },
     });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server error' });

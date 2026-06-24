@@ -4,16 +4,56 @@ import toast from 'react-hot-toast';
 import { submitPrediction } from '../../services/api';
 
 const WC_TEAMS_2026 = [
-  'Argentina', 'Brazil', 'France', 'England', 'Spain', 'Germany',
-  'Portugal', 'Netherlands', 'Belgium', 'Italy', 'Uruguay', 'Colombia',
-  'Mexico', 'USA', 'Canada', 'Morocco', 'Senegal', 'Nigeria',
-  'Japan', 'South Korea', 'Australia', 'Croatia', 'Denmark',
-  'Switzerland', 'Poland', 'Serbia', 'Ecuador', 'Peru', 'Chile',
-  'Saudi Arabia', 'Iran', 'Qatar', 'Cameroon', 'Ghana', 'Tunisia',
-  'Costa Rica', 'Panama', 'Honduras',
+  { name: 'Argentina', flag: '🇦🇷' },
+  { name: 'Brazil', flag: '🇧🇷' },
+  { name: 'France', flag: '🇫🇷' },
+  { name: 'England', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+  { name: 'Spain', flag: '🇪🇸' },
+  { name: 'Germany', flag: '🇩🇪' },
+  { name: 'Portugal', flag: '🇵🇹' },
+  { name: 'Netherlands', flag: '🇳🇱' },
+  { name: 'Belgium', flag: '🇧🇪' },
+  { name: 'Italy', flag: '🇮🇹' },
+  { name: 'Uruguay', flag: '🇺🇾' },
+  { name: 'Colombia', flag: '🇨🇴' },
+  { name: 'Mexico', flag: '🇲🇽' },
+  { name: 'USA', flag: '🇺🇸' },
+  { name: 'Canada', flag: '🇨🇦' },
+  { name: 'Morocco', flag: '🇲🇦' },
+  { name: 'Senegal', flag: '🇸🇳' },
+  { name: 'Nigeria', flag: '🇳🇬' },
+  { name: 'Japan', flag: '🇯🇵' },
+  { name: 'South Korea', flag: '🇰🇷' },
+  { name: 'Australia', flag: '🇦🇺' },
+  { name: 'Croatia', flag: '🇭🇷' },
+  { name: 'Denmark', flag: '🇩🇰' },
+  { name: 'Switzerland', flag: '🇨🇭' },
+  { name: 'Poland', flag: '🇵🇱' },
+  { name: 'Serbia', flag: '🇷🇸' },
+  { name: 'Ecuador', flag: '🇪🇨' },
+  { name: 'Peru', flag: '🇵🇪' },
+  { name: 'Chile', flag: '🇨🇱' },
+  { name: 'Saudi Arabia', flag: '🇸🇦' },
+  { name: 'Iran', flag: '🇮🇷' },
+  { name: 'Qatar', flag: '🇶🇦' },
+  { name: 'Cameroon', flag: '🇨🇲' },
+  { name: 'Ghana', flag: '🇬🇭' },
+  { name: 'Tunisia', flag: '🇹🇳' },
+  { name: 'Costa Rica', flag: '🇨🇷' },
+  { name: 'Panama', flag: '🇵🇦' },
+  { name: 'Honduras', flag: '🇭🇳' },
 ];
 
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
+// Normalize phone to 10 digits on the frontend too
+const normalizePhone = (phone) => {
+  let cleaned = phone.replace(/[\s\-\(\)]/g, '');
+  if (cleaned.startsWith('+91')) cleaned = cleaned.slice(3);
+  else if (cleaned.startsWith('0091')) cleaned = cleaned.slice(4);
+  else if (cleaned.startsWith('91') && cleaned.length === 12) cleaned = cleaned.slice(2);
+  return cleaned;
+};
 
 export default function PredictionForm({ onSuccess, disabled }) {
   const [form, setForm] = useState({
@@ -33,14 +73,31 @@ export default function PredictionForm({ onSuccess, disabled }) {
     if (errors[field]) setErrors((e) => ({ ...e, [field]: '' }));
   };
 
+  // Only allow digits, max 10
+  const handlePhoneChange = (e) => {
+    const raw = e.target.value;
+    // Allow digits, +, spaces for typing — normalize on validate
+    const filtered = raw.replace(/[^\d+\s]/g, '').slice(0, 14);
+    set('phone', filtered);
+  };
+
   const validate = () => {
     const e = {};
-    if (!form.name.trim() || form.name.trim().length < 3) e.name = 'Name must be at least 3 characters';
-    if (!form.phone.trim() || !/^\+?[\d\s\-]{7,15}$/.test(form.phone.trim())) e.phone = 'Enter a valid phone number';
-    if (!form.predictedWinner) e.predictedWinner = 'Please select the predicted winner';
-    if (form.yourGoals === '' || form.yourGoals === null) e.yourGoals = 'Required';
-    if (form.opponentGoals === '' || form.opponentGoals === null) e.opponentGoals = 'Required';
-    if (form.isBloodDonor && !form.bloodGroup) e.bloodGroup = 'Select your blood group';
+    if (!form.name.trim() || form.name.trim().length < 3)
+      e.name = 'Name must be at least 3 characters';
+
+    const normalized = normalizePhone(form.phone);
+    if (!normalized || !/^\d{10}$/.test(normalized))
+      e.phone = 'Enter a valid 10-digit mobile number';
+
+    if (!form.predictedWinner)
+      e.predictedWinner = 'Please select the predicted winner';
+    if (form.yourGoals === '' || form.yourGoals === null)
+      e.yourGoals = 'Required';
+    if (form.opponentGoals === '' || form.opponentGoals === null)
+      e.opponentGoals = 'Required';
+    if (form.isBloodDonor && !form.bloodGroup)
+      e.bloodGroup = 'Select your blood group';
     return e;
   };
 
@@ -56,6 +113,7 @@ export default function PredictionForm({ onSuccess, disabled }) {
     try {
       const { data } = await submitPrediction({
         ...form,
+        phone: normalizePhone(form.phone), // send normalized to backend
         yourGoals: parseInt(form.yourGoals),
         opponentGoals: parseInt(form.opponentGoals),
       });
@@ -75,6 +133,9 @@ export default function PredictionForm({ onSuccess, disabled }) {
     `w-full input-dark rounded-xl px-4 py-3 text-sm transition-all ${
       errors[field] ? 'border-red-500/50 bg-red-500/5' : ''
     }`;
+
+  // Find selected team object for display
+  const selectedTeam = WC_TEAMS_2026.find((t) => t.name === form.predictedWinner);
 
   if (disabled) {
     return (
@@ -119,16 +180,23 @@ export default function PredictionForm({ onSuccess, disabled }) {
         <label className="block text-xs text-slate-400 uppercase tracking-wider mb-2">
           Phone Number <span className="text-gold-500">*</span>
         </label>
-        <input
-          className={inputClass('phone')}
-          placeholder="+91 98765 43210"
-          value={form.phone}
-          onChange={(e) => set('phone', e.target.value)}
-          type="tel"
-          maxLength={15}
-        />
+        <div className="relative">
+          {/* +91 prefix badge */}
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400 font-mono select-none">
+            +91
+          </span>
+          <input
+            className={`${inputClass('phone')} pl-12`}
+            placeholder="98765 43210"
+            value={form.phone}
+            onChange={handlePhoneChange}
+            type="tel"
+            inputMode="numeric"
+            maxLength={14}
+          />
+        </div>
         {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
-        <p className="text-slate-600 text-xs mt-1">One prediction per phone number</p>
+        <p className="text-slate-600 text-xs mt-1">10-digit number · one prediction per number</p>
       </div>
 
       {/* Winner Team */}
@@ -136,19 +204,31 @@ export default function PredictionForm({ onSuccess, disabled }) {
         <label className="block text-xs text-slate-400 uppercase tracking-wider mb-2">
           Predicted Final Winner <span className="text-gold-500">*</span>
         </label>
-        <select
-          className={`w-full select-dark rounded-xl px-4 py-3 text-sm transition-all ${
-            errors.predictedWinner ? 'border-red-500/50' : 'border border-white/10'
-          }`}
-          value={form.predictedWinner}
-          onChange={(e) => set('predictedWinner', e.target.value)}
-        >
-          <option value="">Select a team...</option>
-          {WC_TEAMS_2026.map((t) => (
-            <option key={t} value={t}>{t}</option>
-          ))}
-        </select>
-        {errors.predictedWinner && <p className="text-red-400 text-xs mt-1">{errors.predictedWinner}</p>}
+        <div className="relative">
+          {/* Show flag of selected team */}
+          {selectedTeam && (
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl pointer-events-none">
+              {selectedTeam.flag}
+            </span>
+          )}
+          <select
+            className={`w-full select-dark rounded-xl py-3 text-sm transition-all border ${
+              errors.predictedWinner ? 'border-red-500/50' : 'border-white/10'
+            } ${selectedTeam ? 'pl-10 pr-4' : 'px-4'}`}
+            value={form.predictedWinner}
+            onChange={(e) => set('predictedWinner', e.target.value)}
+          >
+            <option value="">Select a team...</option>
+            {WC_TEAMS_2026.map((t) => (
+              <option key={t.name} value={t.name}>
+                {t.flag} {t.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        {errors.predictedWinner && (
+          <p className="text-red-400 text-xs mt-1">{errors.predictedWinner}</p>
+        )}
       </div>
 
       {/* Score Prediction */}
@@ -159,7 +239,9 @@ export default function PredictionForm({ onSuccess, disabled }) {
         <div className="flex items-center gap-3">
           <div className="flex-1">
             <label className="text-xs text-slate-500 mb-1 block text-center">
-              {form.predictedWinner || 'Winner'} Goals
+              {selectedTeam ? (
+                <span>{selectedTeam.flag} {selectedTeam.name}</span>
+              ) : 'Winner'} Goals
             </label>
             <input
               className={`${inputClass('yourGoals')} text-center font-display text-2xl`}
@@ -170,11 +252,15 @@ export default function PredictionForm({ onSuccess, disabled }) {
               value={form.yourGoals}
               onChange={(e) => set('yourGoals', e.target.value)}
             />
-            {errors.yourGoals && <p className="text-red-400 text-xs mt-1 text-center">{errors.yourGoals}</p>}
+            {errors.yourGoals && (
+              <p className="text-red-400 text-xs mt-1 text-center">{errors.yourGoals}</p>
+            )}
           </div>
           <div className="text-gold-500 font-display text-3xl pb-5">—</div>
           <div className="flex-1">
-            <label className="text-xs text-slate-500 mb-1 block text-center">Opponent Goals</label>
+            <label className="text-xs text-slate-500 mb-1 block text-center">
+              Opponent Goals
+            </label>
             <input
               className={`${inputClass('opponentGoals')} text-center font-display text-2xl`}
               type="number"
@@ -184,12 +270,14 @@ export default function PredictionForm({ onSuccess, disabled }) {
               value={form.opponentGoals}
               onChange={(e) => set('opponentGoals', e.target.value)}
             />
-            {errors.opponentGoals && <p className="text-red-400 text-xs mt-1 text-center">{errors.opponentGoals}</p>}
+            {errors.opponentGoals && (
+              <p className="text-red-400 text-xs mt-1 text-center">{errors.opponentGoals}</p>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Blood Donor Section */}
+      {/* Blood Donor */}
       <div className="border border-red-500/10 rounded-xl p-4 bg-red-500/5">
         <label className="flex items-start gap-3 cursor-pointer">
           <input
@@ -231,7 +319,9 @@ export default function PredictionForm({ onSuccess, disabled }) {
                 </button>
               ))}
             </div>
-            {errors.bloodGroup && <p className="text-red-400 text-xs mt-2">{errors.bloodGroup}</p>}
+            {errors.bloodGroup && (
+              <p className="text-red-400 text-xs mt-2">{errors.bloodGroup}</p>
+            )}
           </motion.div>
         )}
       </div>
