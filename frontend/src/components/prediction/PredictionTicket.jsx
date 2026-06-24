@@ -58,7 +58,7 @@ export default function PredictionTicket({ data, onReset }) {
         ref={ticketRef}
         className="relative rounded-2xl overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #0a1a0f 0%, #0f2414 50%, #0a1a0f 100%)',
+          background: 'linear-gradient(135deg, #120a1a 0%, #0f1024 50%, #0a1a0f 100%)',
           border: '1px solid rgba(245,158,11,0.3)',
           boxShadow: '0 0 40px rgba(245,158,11,0.1)',
         }}
@@ -77,7 +77,7 @@ export default function PredictionTicket({ data, onReset }) {
           className="relative px-6 py-4 text-center border-b"
           style={{ borderColor: 'rgba(245,158,11,0.2)', background: 'rgba(245,158,11,0.06)' }}
         >
-          <div className="text-xs tracking-[0.3em] text-gold-400 uppercase mb-1">FIFA</div>
+          <div className="text-xs tracking-[0.3em] text-gold-400 uppercase mb-1">DYFI BALUSSERY MC</div>
           <div
             className="font-display text-2xl tracking-widest"
             style={{ color: '#fbbf24', textShadow: '0 0 20px rgba(245,158,11,0.5)' }}
@@ -85,6 +85,7 @@ export default function PredictionTicket({ data, onReset }) {
             WORLD CUP 2026
           </div>
           <div className="text-xs text-slate-400 tracking-widest uppercase mt-0.5">
+
             Prediction Challenge
           </div>
         </div>
@@ -110,7 +111,7 @@ export default function PredictionTicket({ data, onReset }) {
 
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate-500 uppercase tracking-wider">Predicted Winner</span>
-            <span className="text-gold-300 font-bold text-sm">{data.predictedWinner}</span>
+            <span className="text-gold-500 font-bold text-sm">{data.predictedWinner}</span>
           </div>
 
           <div className="flex justify-between items-center">
@@ -149,7 +150,7 @@ export default function PredictionTicket({ data, onReset }) {
           className="px-6 py-3 text-center text-xs text-slate-600"
           style={{ borderTop: '1px solid rgba(255,255,255,0.04)', background: 'rgba(0,0,0,0.2)' }}
         >
-          Not a gambling platform. Official results published after the Final.
+          Winners will be announced on 21 July 2026.
         </div>
       </div>
 
