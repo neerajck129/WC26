@@ -92,7 +92,7 @@ export default function HomePage() {
               className="font-display  text-5xl md:text-7xl lg:text-8xl tracking-wider leading-none "
               style={{ color: '#f1f5f9' }}>
                 FIFA WORLD CUP
-              <h1 className="gold-text mt-5 font text-4xl ">PREDICTION CHALLENGE</h1>
+              <h1 className="gold-text mt-5 font text-6xl ">PREDICTION CHALLENGE</h1>
 
             </h1>
             <p className="text-slate-400 text-base md:text-lg mt-6 max-w-xl mx-auto leading-relaxed">
