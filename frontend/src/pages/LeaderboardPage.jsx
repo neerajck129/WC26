@@ -5,8 +5,6 @@ import { getLeaderboard } from '../services/api';
 import TrophyIcon from '../components/common/TrophyIcon';
 import Confetti from '../components/common/Confetti';
 
-const MEDALS = ['🥇', '🥈', '🥉'];
-
 export default function LeaderboardPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,6 +27,8 @@ export default function LeaderboardPage() {
     );
   }
 
+  const winner = data?.data?.[0];
+
   return (
     <div className="min-h-screen stadium-bg" style={{ background: 'linear-gradient(180deg, #050a07 0%, #0a0f0d 100%)' }}>
       {data?.published && <Confetti />}
@@ -41,7 +41,7 @@ export default function LeaderboardPage() {
         <span className="text-gold-500 font-display text-xl tracking-widest ml-auto">LEADERBOARD</span>
       </nav>
 
-      <div className="px-4 max-w-3xl mx-auto py-12">
+      <div className="px-4 max-w-2xl mx-auto py-16">
         {!data?.published ? (
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -85,79 +85,57 @@ export default function LeaderboardPage() {
               </motion.div>
             )}
 
-            {/* Podium top 3 */}
-            {data.data?.slice(0, 3).length > 0 && (
-              <div className="mb-10">
-                <h2 className="font-display text-3xl tracking-wider text-center mb-8">
-                  🏆 <span className="gold-text">WINNERS</span> 🏆
+            {/* Winning Prediction — the only entry shown */}
+            {winner && (
+              <motion.div
+                initial={{ opacity: 0, y: 40, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ type: 'spring', stiffness: 120, damping: 14 }}
+                className="text-center"
+              >
+                <h2 className="font-display text-3xl md:text-4xl tracking-wider mb-8">
+                  🏆 <span className="gold-text">WINNING PREDICTION</span> 🏆
                 </h2>
-                <div className="flex items-end justify-center gap-4">
-                  {[data.data[1], data.data[0], data.data[2]].filter(Boolean).map((p, i) => {
-                    const realIndex = i === 0 ? 1 : i === 1 ? 0 : 2;
-                    return (
-                      <motion.div
-                        key={p._id}
-                        initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: realIndex * 0.15 }}
-                        className={`glass-card rounded-2xl p-4 text-center flex-1 max-w-[160px] ${
-                          realIndex === 0 ? 'border border-gold-500/40 order-2' : 'border border-white/5'
-                        }`}
-                        style={realIndex === 0 ? { paddingTop: '24px', paddingBottom: '24px' } : {}}
-                      >
-                        <div className="text-3xl mb-2">{MEDALS[realIndex]}</div>
-                        <div className="text-sm font-bold text-slate-100 truncate">{p.name}</div>
-                        <div className="text-xs text-slate-500 mt-1 font-mono">{p.predictionId}</div>
-                        <div className="text-xs text-gold-400 mt-1">{p.predictedWinner}</div>
-                        <div className="text-xs text-slate-400">{p.yourGoals} - {p.opponentGoals}</div>
-                        <div className="mt-2">
-                          <span className={`text-xs font-bold px-2 py-0.5 rounded rank-${realIndex + 1}`}>
-                            {p.points} pts
-                          </span>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </div>
+
+                <motion.div
+                  animate={{
+                    boxShadow: [
+                      '0 0 30px 0px rgba(234, 179, 8, 0.25)',
+                      '0 0 55px 8px rgba(234, 179, 8, 0.45)',
+                      '0 0 30px 0px rgba(234, 179, 8, 0.25)',
+                    ],
+                  }}
+                  transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                  className="glass-card gold-border rounded-3xl p-10 md:p-12 relative overflow-hidden"
+                >
+                  <div className="absolute -top-8 -right-8 text-[120px] opacity-10 select-none">🥇</div>
+
+                  <div className="text-7xl mb-4">🥇</div>
+
+                  <div className="font-display text-2xl md:text-3xl text-slate-100 mb-1">
+                    {winner.name}
+                  </div>
+                  <div className="text-sm text-slate-500 font-mono mb-6">
+                    {winner.predictionId}
+                  </div>
+
+                  <div className="text-xs text-gold-500 uppercase tracking-widest mb-2">Predicted</div>
+                  <div className="font-display text-xl text-gold-400 mb-1">
+                    {winner.predictedWinner}
+                  </div>
+                  <div className="font-display text-5xl md:text-6xl text-slate-100 mb-8">
+                    {winner.yourGoals} - {winner.opponentGoals}
+                  </div>
+
+                  <span className="inline-block text-lg font-bold px-6 py-2 rounded-full bg-gold-500/20 text-gold-400 border border-gold-500/40">
+                    {winner.points} pts
+                  </span>
+                </motion.div>
+              </motion.div>
             )}
 
-            {/* Full table */}
-            {data.data?.length > 0 && (
-              <div>
-                <h3 className="font-bold text-slate-300 mb-4">Top Rankings</h3>
-                <div className="space-y-2">
-                  {data.data.map((p, i) => (
-                    <motion.div
-                      key={p._id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.03 }}
-                      className="glass-card rounded-xl px-4 py-3 flex items-center gap-4 border border-white/5"
-                    >
-                      <span className="text-sm font-mono w-6 text-slate-500 text-center">
-                        {p.rank <= 3 ? MEDALS[p.rank - 1] : `#${p.rank}`}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-sm text-slate-100 truncate">{p.name}</div>
-                        <div className="text-xs text-slate-500 font-mono">{p.predictionId}</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xs text-gold-400">{p.predictedWinner}</div>
-                        <div className="text-xs text-slate-400">{p.yourGoals} - {p.opponentGoals}</div>
-                      </div>
-                      <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ml-2 ${
-                        p.points === 15 ? 'bg-gold-500/20 text-gold-400' :
-                        p.points >= 10 ? 'bg-green-500/10 text-green-400' :
-                        p.points >= 5 ? 'bg-blue-500/10 text-blue-400' :
-                        'bg-white/5 text-slate-400'
-                      }`}>
-                        {p.points} pts
-                      </span>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
+            {!winner && (
+              <p className="text-center text-slate-500 text-sm">No predictions yet.</p>
             )}
           </>
         )}
